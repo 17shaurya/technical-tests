@@ -1,12 +1,44 @@
 import React, { useState } from "react";
 import Header from "../components/header";
 import { users } from "../setup/apis";
+import DataTable from "react-data-table-component";
 
 export default function Searching() {
+  //ListColumns
+  const columns = [
+    {
+      name: "Serial No.",
+      selector: (row: any, index: any) => index + 1,
+      sortable: true,
+    },
+    {
+      name: "Login ID",
+      selector: (row: any) => row.login,
+      sortable: true,
+    },
+    {
+      name: "Avatar",
+      selector: (row: any) => (
+        <img
+          style={{ width: 30, height: 30 }}
+          src={row.avatar_url}
+          alt={row.id}
+        />
+      ),
+      sortable: true,
+    },
+    {
+      name: "User Type",
+      selector: (row: any) => row.type,
+      sortable: true,
+    },
+  ];
+
   const [list, setuser_list] = useState([]);
+
+  //fet users from API
   const getUsers = async (name: any) => {
     let usersData = await users(name);
-
     setuser_list(usersData?.items);
   };
 
@@ -27,13 +59,11 @@ export default function Searching() {
         onChange={(e) => getUsers(e.target.value)}
       />
 
-      {list.length > 0 &&
-        // eslint-disable-next-line array-callback-return
-        list.map((user: any) => {
-          return <h4>{user.login}</h4>;
-        })}
-
-      {!list.length && <div>No Data found</div>}
+      <div className="table-responsive" style={{ width: "100%" }}>
+        {/* begin::Table */}
+        <DataTable title="Users" columns={columns} data={list} pagination />
+        {/* end::Table */}
+      </div>
     </div>
   );
 }

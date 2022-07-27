@@ -4,6 +4,8 @@ import Header from "../components/header";
 export default function Checkbox() {
   const [isAllChecked, setAllCheck] = useState(false);
   const [checked_values, setChecked] = useState<any[]>([]);
+
+  //Select/UnSelectAll
   const handleSelectAll = () => {
     setAllCheck(!isAllChecked);
     const arr = bikes.map((bike: any) => {
@@ -15,14 +17,30 @@ export default function Checkbox() {
     }
   };
 
+  //single select/unselect
   const handleClick = (e: any) => {
     const { id, checked } = e.target;
-    const arr = [...checked_values, ...id];
+    let finalarr = [];
+    let arr = [...checked_values, ...id];
+    arr = arr.filter((value, index) => arr.indexOf(value) === index);
     setChecked(arr);
     if (!checked) {
-      setChecked(checked_values.filter((item: any) => item !== id.toString()));
+      finalarr = checked_values.filter((item: any) => item !== id.toString());
+      setChecked(finalarr);
+      if (isAllChecked) {
+        setAllCheck(false);
+      }
+      if (bikes.length !== finalarr.length) {
+        setAllCheck(false);
+      }
+    }
+    if (checked) {
+      if (bikes.length === arr.length) {
+        setAllCheck(true);
+      }
     }
   };
+
   return (
     <div
       className="header"
@@ -39,7 +57,7 @@ export default function Checkbox() {
         />
         <label>Select All</label>
       </div>
-
+      {/* checkbox listingstart */}
       {bikes.map((item: any) => {
         return (
           <div key={item.id}>
@@ -54,6 +72,7 @@ export default function Checkbox() {
           </div>
         );
       })}
+      {/* checkbox listing end */}
     </div>
   );
 }
